@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LegalFlow AI</title>
+<style>
+  :root{
+    --navy:#16305B; --navy2:#1F4172; --gold:#C8932E; --gold-l:#E0A82E;
+    --paper:#F7F5F0; --card:#FFFFFF; --ink:#1A2238; --slate:#5A6B85;
+    --line:#E2DED4; --green:#2E7D5B; --green-l:#E9F2ED; --maroon:#8B2E2E; --maroon-l:#F5EAEA;
+    --serif:'Iowan Old Style','Palatino Linotype','Palatino',Georgia,'Times New Roman',serif;
+    --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:880px;margin:0 auto;padding:0 20px}
+  header{background:var(--navy);color:#fff;padding:34px 0 30px;position:relative;overflow:hidden}
+  header::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 88% 18%, rgba(200,147,46,.20), transparent 42%);pointer-events:none}
+  .brand{display:flex;align-items:center;gap:13px}
+  .mark{width:42px;height:42px;border-radius:9px;background:var(--gold);display:grid;place-items:center;color:var(--navy);font-size:23px;flex:0 0 auto;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+  .brand h1{font-family:var(--serif);font-weight:700;font-size:30px;letter-spacing:.3px}
+  .brand h1 span{color:var(--gold-l)}
+  .tagline{color:#C9D5E8;margin-top:11px;font-size:15px;max-width:620px}
+  .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-l);font-weight:600;margin-bottom:7px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;margin-top:-26px;box-shadow:0 12px 34px rgba(22,48,91,.10);position:relative;z-index:2}
+  .panel h2{font-family:var(--serif);font-size:21px;color:var(--navy);margin-bottom:4px}
+  .panel .hint{font-size:13.5px;color:var(--slate);margin-bottom:18px}
+  label{display:block;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--navy);margin:0 0 7px}
+  select,textarea{width:100%;font-family:var(--sans);font-size:15px;color:var(--ink);background:#FCFBF8;border:1.5px solid var(--line);border-radius:10px;padding:12px 13px;transition:border .15s}
+  select:focus,textarea:focus{outline:none;border-color:var(--gold)}
+  textarea{resize:vertical;min-height:120px;line-height:1.55}
+  .field{margin-bottom:16px}
+  .row-btn{display:flex;flex-wrap:wrap;gap:11px;align-items:center;margin-top:4px}
+  button{font-family:var(--sans);font-weight:600;cursor:pointer;border:none;border-radius:10px;transition:transform .08s,box-shadow .15s,background .15s}
+  button:active{transform:translateY(1px)}
+  .btn-primary{background:var(--navy);color:#fff;font-size:15px;padding:13px 22px;box-shadow:0 5px 16px rgba(22,48,91,.28)}
+  .btn-primary:hover{background:var(--navy2)}
+  .btn-ghost{background:transparent;color:var(--navy);font-size:14px;padding:13px 16px;border:1.5px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+  .btn-primary:disabled{opacity:.55;cursor:not-allowed}
+  .status{margin-top:14px;font-size:13.5px;color:var(--slate);display:none;align-items:center;gap:9px}
+  .status.show{display:flex}
+  .spinner{width:16px;height:16px;border:2.5px solid var(--line);border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  #out{margin-top:26px;display:none}
+  #out.show{display:block;animation:rise .4s ease}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .mode{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;padding:5px 11px;border-radius:20px;margin-bottom:14px}
+  .mode.ai{background:var(--green-l);color:var(--green)}
+  .mode.off{background:#EEF2F8;color:var(--navy)}
+  .res-head{font-family:var(--serif);font-size:23px;color:var(--navy);line-height:1.3;margin-bottom:3px}
+  .res-sub{font-size:13px;color:var(--slate);margin-bottom:20px}
+  .res-sub b{color:var(--gold);font-weight:600}
+  .sec{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:16px}
+  .sec-t{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--navy);margin-bottom:13px}
+  .sec-t .dot{width:7px;height:7px;border-radius:2px;background:var(--gold)}
+  .sec p{font-size:15px;color:var(--ink)}
+  .sec ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+  .sec li{font-size:14.5px;padding-left:18px;position:relative;color:var(--ink)}
+  .sec li::before{content:"";position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:var(--gold)}
+  .pihak b{color:var(--navy)} .law b{color:var(--navy)}
+  .alur{position:relative;padding-left:8px}
+  .step{position:relative;padding:0 0 20px 46px}
+  .step::before{content:"";position:absolute;left:15px;top:30px;bottom:-2px;width:2px;background:var(--line)}
+  .step:last-child::before{display:none}
+  .step .num{position:absolute;left:0;top:0;width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:14px;font-weight:700;box-shadow:0 2px 6px rgba(22,48,91,.25);z-index:2}
+  .step h4{font-size:15px;color:var(--navy);font-weight:700;margin-bottom:2px}
+  .step p{font-size:14px;color:var(--slate)}
+  .branch{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .br{border-radius:12px;padding:15px 16px}
+  .br.ya{background:var(--green-l);border:1px solid var(--green)}
+  .br.no{background:var(--maroon-l);border:1px solid var(--maroon)}
+  .br h5{font-size:13px;text-transform:uppercase;letter-spacing:.07em;margin-bottom:9px}
+  .br.ya h5{color:var(--green)} .br.no h5{color:var(--maroon)}
+  .br ul{gap:7px} .br li{font-size:13.5px}
+  .br.ya li::before{background:var(--green)} .br.no li::before{background:var(--maroon)}
+  .verify{display:flex;gap:11px;background:#FBF6E9;border:1px solid var(--gold);border-radius:12px;padding:14px 16px;font-size:13.5px;color:#6b531a;margin-top:4px}
+  .verify b{color:var(--navy)}
+  .export{margin-top:18px;display:flex;justify-content:flex-end}
+  .btn-export{background:var(--gold);color:#3a2c08;font-size:13.5px;padding:11px 18px}
+  .btn-export:hover{background:var(--gold-l)}
+  footer{text-align:center;color:var(--slate);font-size:12.5px;padding:30px 20px 40px;line-height:1.7}
+  footer b{color:var(--navy)}
+  .seq{display:inline-flex;gap:4px;flex-wrap:wrap;margin-top:18px;justify-content:center}
+  .seq span{font-size:10.5px;color:#A9B4C7;border:1px solid var(--line);border-radius:20px;padding:3px 9px}
+  @media(max-width:560px){.brand h1{font-size:25px}.branch{grid-template-columns:1fr}.panel{padding:20px}.btn-primary,.btn-ghost{width:100%;text-align:center}}
+  @media print{header,.panel,footer,.export,.mode{display:none!important}body{background:#fff}#out{display:block!important;margin:0}.sec{break-inside:avoid;border-color:#ccc;box-shadow:none}.step{break-inside:avoid}@page{margin:14mm}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="eyebrow">Project Magister Hukum &middot; UDB Surakarta</div>
+    <div class="brand"><div class="mark">&#9878;</div><h1>LegalFlow<span> AI</span></h1></div>
+    <p class="tagline">Menyusun alur penyelesaian masalah hukum secara sistematis, terstruktur, dan mudah dipahami &mdash; dari merangkum fakta hingga rekomendasi, lalu memvisualisasikannya.</p>
+  </div>
+</header>
+<div class="wrap">
+  <div class="panel">
+    <h2>Susun alur penyelesaian</h2>
+    <p class="hint">Pilih bidang hukum, tuliskan ringkasan fakta kasus, lalu jalankan. Aplikasi ini berfungsi penuh tanpa internet; mode AI langsung aktif bila dibuka di claude.ai.</p>
+    <div class="field">
+      <label for="bidang">Bidang hukum</label>
+      <select id="bidang">
+        <option>Hukum Kesehatan / Kefarmasian</option>
+        <option>Hukum Bisnis</option>
+        <option>Hukum Ketenagakerjaan</option>
+        <option>Perlindungan Konsumen</option>
+        <option>Hukum Pidana</option>
+        <option>Hukum Administrasi / Kebijakan Publik</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="fakta">Ringkasan fakta kasus</label>
+      <textarea id="fakta">Seorang pasien menebus resep dengan beberapa obat berpotensi interaksi di apotek. Beberapa hari kemudian ia mengalami reaksi yang tidak diinginkan dan keluarganya menduga ada kelalaian pelayanan. Saat ditelusuri di sistem apotek (Vmedis), modul Konsultasi Apoteker yang memuat skrining resep, SOAP, KIE, dan DRP sebagian besar kosong, sehingga apoteker sulit membuktikan bahwa standar pelayanan telah dijalankan.</textarea>
+    </div>
+    <div class="row-btn">
+      <button class="btn-primary" id="run">Susun Alur Penyelesaian</button>
+      <button class="btn-ghost" id="demo">Lihat contoh (kasus kefarmasian)</button>
+    </div>
+    <div class="status" id="status"><div class="spinner"></div><span id="statustext">Menganalisis kasus&hellip;</span></div>
+  </div>
+  <div id="out"></div>
+</div>
+<footer>
+  <b>LegalFlow AI</b> &mdash; prototipe alat bantu analisis hukum berbasis 10 langkah alur penyelesaian.<br>
+  Disusun oleh <b>Apt. [Nama Lengkap], S.Farm.</b> &middot; Magister Hukum, Universitas Duta Bangsa Surakarta.
+  <div class="seq"><span>1 Fakta</span><span>2 Isu</span><span>3 Pihak</span><span>4 Akar masalah</span><span>5 Kerangka</span><span>6 Alternatif</span><span>7 Penilaian</span><span>8 Rekomendasi</span><span>9 Visualisasi</span><span>10 Verifikasi</span></div>
+</footer>
+<script>
+const STEPS=["Merangkum fakta hukum","Mengidentifikasi isu hukum utama","Memetakan hubungan hukum para pihak","Menganalisis akar masalah","Menggunakan kerangka analisis hukum","Menyusun alternatif penyelesaian","Menilai solusi yang paling tepat","Menyusun rekomendasi hukum akhir","Memvisualisasikan alur penyelesaian","Melakukan verifikasi dengan sumber hukum resmi"];
+
+const DEMO={
+  judul:"Dugaan Kelalaian Pelayanan Kefarmasian Akibat Dokumentasi Klinis Tidak Lengkap",
+  bidang:"Hukum Kesehatan / Kefarmasian",
+  fakta:"Pasien menebus resep dengan obat berpotensi interaksi di apotek, lalu mengalami reaksi yang tidak diinginkan. Penelusuran sistem Vmedis menunjukkan field skrining resep, SOAP, KIE, dan DRP pada modul Konsultasi Apoteker kosong, sehingga apoteker kehilangan bukti tertulis pelaksanaan standar pelayanan.",
+  isu:["Tanggung jawab hukum apoteker (APJ) atas dugaan kelalaian pelayanan kefarmasian.","Kedudukan dokumentasi (skrining, SOAP, KIE, DRP) sebagai alat bukti dan pelindung hukum.","Mekanisme penyelesaian sengketa yang tepat serta pencegahan agar tidak berulang."],
+  pihak:[{nama:"Pasien",peran:"penerima pelayanan & konsumen jasa kefarmasian"},{nama:"Apoteker (APJ)",peran:"pengemban tanggung jawab profesi atas mutu pelayanan"},{nama:"Pemilik Sarana Apotek (PSA)",peran:"penyelenggara fasilitas pelayanan"},{nama:"Dinkes & IAI",peran:"fungsi pembinaan, pengawasan, dan disiplin profesi"}],
+  dasarHukum:[{aturan:"UU No. 17 Tahun 2023 tentang Kesehatan",keterangan:"Pasal 145 (praktik kefarmasian), 199 (apoteker = nakes), 306 ayat (3) & 310 (keadilan restoratif/APS), 440 (pidana kelalaian berat)."},{aturan:"Permenkes No. 73 Tahun 2016",keterangan:"Standar Pelayanan Kefarmasian di Apotek; kewajiban pengkajian resep & pendokumentasian pelayanan farmasi klinik."},{aturan:"PP No. 51 Tahun 2009 jo. PP No. 28 Tahun 2024",keterangan:"Pekerjaan kefarmasian & aturan pelaksana UU Kesehatan."},{aturan:"KUH Perdata Pasal 1365\u20131367",keterangan:"Perbuatan melawan hukum, kelalaian, dan tanggung jawab atas pihak di bawah pengawasan."},{aturan:"UU No. 8 Tahun 1999",keterangan:"Perlindungan Konsumen \u2014 hak atas keamanan & informasi (Ps. 4), tanggung jawab ganti rugi (Ps. 19)."}],
+  alur:["Pasien menebus resep berpotensi interaksi; muncul reaksi tak diinginkan; dokumentasi pelayanan ditemukan kosong.","Apakah terjadi kelalaian pelayanan, dan apakah apoteker dapat membuktikan kepatuhan terhadap standar.","Pasien \u2194 apoteker (hubungan pelayanan); apoteker \u2194 PSA (penyelenggaraan); keduanya \u2194 Dinkes/IAI (pengawasan).","Akar masalah bukan reaksi obat semata, melainkan ketiadaan dokumentasi yang menjadi cermin pelaksanaan standar.","Beban pembuktian: tanpa catatan, apoteker kehilangan bukti terkuat. Kualifikasi PMH (Ps. 1365) & batas pidana hanya pada culpa lata.","Internal apotek \u2192 mediasi/keadilan restoratif \u2192 pemeriksaan etik/disiplin (MDP) \u2192 proses hukum formal.","Untuk kelalaian ringan & kerugian dapat dipulihkan: mediasi/RJ paling proporsional (pemulihan, bukan penghukuman).","Tegakkan disiplin dokumentasi sebagai alat bukti; tempuh RJ; rekonstruksi pengawasan internal.","Alur dituangkan dalam diagram percabangan RJ (YA) vs proses hukum formal (TIDAK) menuju tujuan akhir.","Seluruh dasar hukum diverifikasi ke sumber resmi (peraturan.go.id, BPK, JDIH Kemenkes)."],
+  alternatif:{rj:["Korban didampingi & dilibatkan","Ganti rugi / pemulihan yang jelas","Kesepakatan diawasi & didokumentasikan"],formal:["Perdata: ganti rugi (Ps. 1365 KUHPerdata)","Pidana: hanya bila kelalaian berat (Ps. 440)","Apotek/PSA turut bertanggung jawab"]},
+  rekomendasi:"Tempuh mediasi/keadilan restoratif untuk kelalaian ringan yang dapat dipulihkan. Tegakkan disiplin pendokumentasian setiap pelayanan farmasi klinik sebagai alat bukti sekaligus pelindung hukum. Pada tataran sistem, integrasikan modul Konsultasi Apoteker dan modul KPI pada Vmedis agar kelengkapan dokumentasi terukur dan terpantau \u2014 sebuah rekonstruksi pengawasan internal yang melindungi apoteker maupun pasien."
+};
+
+// offline reference library per bidang (nama peraturan yang relevan; diverifikasi pada level UU)
+const LAWLIB={
+  "Hukum Bisnis":[{aturan:"KUH Perdata (Pasal 1320 & 1338)",keterangan:"Syarat sah & kekuatan mengikat perjanjian."},{aturan:"UU No. 40 Tahun 2007 tentang Perseroan Terbatas",keterangan:"Tata kelola & tanggung jawab badan usaha."},{aturan:"UU No. 30 Tahun 1999 tentang Arbitrase & APS",keterangan:"Penyelesaian sengketa di luar pengadilan."}],
+  "Hukum Ketenagakerjaan":[{aturan:"UU No. 13 Tahun 2003 jo. UU No. 6 Tahun 2023 (Cipta Kerja)",keterangan:"Hak & kewajiban pekerja\u2013pengusaha."},{aturan:"UU No. 2 Tahun 2004 tentang PPHI",keterangan:"Penyelesaian perselisihan hubungan industrial: bipartit, mediasi, PHI."}],
+  "Perlindungan Konsumen":[{aturan:"UU No. 8 Tahun 1999 tentang Perlindungan Konsumen",keterangan:"Hak konsumen (Ps. 4), kewajiban pelaku usaha (Ps. 7), ganti rugi (Ps. 19)."},{aturan:"KUH Perdata Pasal 1365",keterangan:"Perbuatan melawan hukum sebagai dasar ganti rugi."},{aturan:"Mekanisme BPSK",keterangan:"Penyelesaian sengketa konsumen melalui mediasi/konsiliasi/arbitrase."}],
+  "Hukum Pidana":[{aturan:"UU No. 1 Tahun 2023 tentang KUHP",keterangan:"Ketentuan pidana materiil (berlaku 2026)."},{aturan:"KUHAP",keterangan:"Hukum acara pidana."},{aturan:"Pendekatan Keadilan Restoratif",keterangan:"Diatur dalam peraturan Kepolisian/Kejaksaan/Mahkamah Agung untuk perkara tertentu."}],
+  "Hukum Administrasi / Kebijakan Publik":[{aturan:"UU No. 30 Tahun 2014 tentang Administrasi Pemerintahan",keterangan:"Asas-asas & keputusan/tindakan pemerintahan."},{aturan:"UU No. 5 Tahun 1986 jo. perubahannya (PTUN)",keterangan:"Sengketa tata usaha negara."}],
+  "default":[{aturan:"KUH Perdata Pasal 1365",keterangan:"Perbuatan melawan hukum sebagai dasar ganti rugi."},{aturan:"UU No. 30 Tahun 1999 tentang Arbitrase & APS",keterangan:"Penyelesaian sengketa di luar pengadilan."}]
+};
+
+function buildOffline(bidang,fakta){
+  if(/apotek|farmasi|kefarmasian|\bobat\b|resep|apoteker/i.test(bidang+" "+fakta))
+    return Object.assign({},DEMO,{fakta:fakta||DEMO.fakta});
+  const lib=LAWLIB[bidang]||LAWLIB.default;
+  const f=fakta.trim();
+  return {
+    judul:"Analisis Alur Penyelesaian \u2014 "+bidang,
+    bidang:bidang,
+    fakta:f,
+    isu:[
+      "Apa peristiwa hukum yang terjadi dan kaidah hukum apa yang relevan dengan "+bidang.toLowerCase()+"?",
+      "Bagaimana hak, kewajiban, dan kemungkinan tanggung jawab masing-masing pihak?",
+      "Jalur penyelesaian apa yang paling tepat dan bagaimana mencegah keberulangan?"
+    ],
+    pihak:[{nama:"Pihak pertama",peran:"pemohon/penggugat atau pihak yang dirugikan"},{nama:"Pihak kedua",peran:"termohon/tergugat atau pihak yang diduga bertanggung jawab"},{nama:"Pihak ketiga",peran:"otoritas/regulator atau lembaga penyelesaian sengketa terkait"}],
+    dasarHukum:lib,
+    alur:[
+      "Rangkum kronologi: "+(f?(f.length>160?f.slice(0,160)+"\u2026":f):"isi ringkasan fakta pada kolom input."),
+      "Tetapkan isu hukum inti yang menjadi pokok sengketa pada bidang "+bidang.toLowerCase()+".",
+      "Petakan para pihak beserta hubungan hukum (perjanjian, perbuatan melawan hukum, atau hubungan administratif).",
+      "Telusuri akar masalah \u2014 penyebab struktural, bukan sekadar gejala permukaan.",
+      "Terapkan kerangka analisis: unsur perbuatan, kesalahan, kerugian, dan hubungan sebab\u2013akibat.",
+      "Susun opsi penyelesaian: negosiasi/internal, mediasi/APS, jalur administratif, hingga litigasi.",
+      "Nilai opsi paling proporsional berdasarkan biaya, waktu, pemulihan hubungan, dan kepastian hukum.",
+      "Rumuskan rekomendasi akhir yang dapat dieksekusi oleh para pihak.",
+      "Tuangkan keseluruhan alur ke dalam diagram percabangan keputusan.",
+      "Verifikasi seluruh dasar hukum ke sumber resmi (peraturan.go.id, JDIH, putusan pengadilan)."
+    ],
+    alternatif:{
+      rj:["Negosiasi / penyelesaian internal","Mediasi atau alternatif penyelesaian sengketa","Kesepakatan damai yang terdokumentasi"],
+      formal:["Gugatan/permohonan ke pengadilan yang berwenang","Proses pemeriksaan & pembuktian","Putusan dan pelaksanaannya (eksekusi)"]
+    },
+    rekomendasi:"Untuk sengketa yang hubungannya masih dapat dipulihkan, utamakan jalur non-litigasi (negosiasi/mediasi) karena lebih cepat dan hemat. Tempuh jalur formal hanya bila kesepakatan tidak tercapai atau terdapat pelanggaran berat. Pastikan setiap dasar hukum diverifikasi sebelum digunakan, dan dokumentasikan seluruh proses sebagai alat bukti."
+  };
+}
+
+const out=document.getElementById('out');
+const esc=s=>(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function render(d,mode){
+  const badge = mode==='ai'
+    ? '<div class="mode ai">&#9889; Dianalisis langsung oleh AI</div>'
+    : '<div class="mode off">&#9679; Mode luring \u00B7 kerangka 10 langkah</div>';
+  const isu=(d.isu||[]).map(i=>`<li>${esc(i)}</li>`).join('');
+  const pihak=(d.pihak||[]).map(p=>`<div class="pihak"><b>${esc(p.nama)}</b> &mdash; ${esc(p.peran)}</div>`).join('');
+  const law=(d.dasarHukum||[]).map(l=>`<div class="law" style="margin-bottom:9px"><b>${esc(l.aturan)}</b><br><span style="color:var(--slate);font-size:13.5px">${esc(l.keterangan)}</span></div>`).join('');
+  const alur=(d.alur||[]).map((a,i)=>`<div class="step"><div class="num">${i+1}</div><h4>${esc(STEPS[i]||'')}</h4><p>${esc(a)}</p></div>`).join('');
+  const rj=((d.alternatif||{}).rj||[]).map(x=>`<li>${esc(x)}</li>`).join('');
+  const fm=((d.alternatif||{}).formal||[]).map(x=>`<li>${esc(x)}</li>`).join('');
+  out.innerHTML=`${badge}
+    <div class="res-head">${esc(d.judul||'Alur Penyelesaian')}</div>
+    <div class="res-sub"><b>${esc(d.bidang||'')}</b> &middot; disusun melalui 10 langkah LegalFlow AI</div>
+    <div class="sec"><div class="sec-t"><span class="dot"></span>Fakta hukum</div><p>${esc(d.fakta||'')}</p></div>
+    <div class="sec"><div class="sec-t"><span class="dot"></span>Isu hukum</div><ul>${isu}</ul></div>
+    <div class="sec"><div class="sec-t"><span class="dot"></span>Hubungan hukum para pihak</div><div style="display:flex;flex-direction:column;gap:7px">${pihak}</div></div>
+    <div class="sec"><div class="sec-t"><span class="dot"></span>Dasar hukum</div>${law}</div>
+    <div class="sec"><div class="sec-t"><span class="dot"></span>Alur penyelesaian &mdash; 10 langkah</div><div class="alur">${alur}</div></div>
+    <div class="sec"><div class="sec-t"><span class="dot"></span>Alternatif penyelesaian</div><div class="branch"><div class="br ya"><h5>Jalur damai / non-litigasi (YA)</h5><ul>${rj}</ul></div><div class="br no"><h5>Jalur hukum formal (TIDAK)</h5><ul>${fm}</ul></div></div></div>
+    <div class="sec"><div class="sec-t"><span class="dot"></span>Rekomendasi</div><p>${esc(d.rekomendasi||'')}</p></div>
+    <div class="verify">&#9888;&#65039;<div><b>Verifikasi wajib.</b> Output ini adalah draf analisis. Pastikan setiap dasar hukum dicek ke sumber resmi (peraturan.go.id, JDIH BPK, putusan pengadilan) sebelum digunakan.</div></div>
+    <div class="export"><button class="btn-export" onclick="window.print()">&#128424;&#65039; Cetak / Simpan PDF</button></div>`;
+  out.classList.add('show');
+  out.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+const status=document.getElementById('status'),stext=document.getElementById('statustext'),runBtn=document.getElementById('run');
+function showStatus(m){status.classList.add('show');stext.textContent=m;}
+function hideStatus(){status.classList.remove('show');}
+
+document.getElementById('demo').addEventListener('click',()=>{hideStatus();render(DEMO,'off');});
+
+document.getElementById('run').addEventListener('click',async()=>{
+  const bidang=document.getElementById('bidang').value;
+  const fakta=document.getElementById('fakta').value.trim();
+  if(fakta.length<25){showStatus('Tuliskan ringkasan fakta kasus dulu (beberapa kalimat).');return;}
+  runBtn.disabled=true;showStatus('Menganalisis kasus\u2026');
+  // try live AI (works inside claude.ai); fall back to offline engine seamlessly
+  try{
+    const resp=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:2000,
+        system:`Anda LegalFlow AI, asisten analisis hukum Indonesia. Balas HANYA JSON valid tanpa markdown: {"judul":str,"bidang":str,"fakta":str,"isu":[str,str,str],"pihak":[{"nama":str,"peran":str}],"dasarHukum":[{"aturan":str,"keterangan":str}],"alur":[10 string sesuai urutan: ${STEPS.join(' | ')}],"alternatif":{"rj":[str,str,str],"formal":[str,str,str]},"rekomendasi":str}. Gunakan dasar hukum Indonesia yang nyata; jangan mengarang nomor pasal jika ragu.`,
+        messages:[{role:"user",content:`Bidang: ${bidang}\nFakta: ${fakta}\nSusun analisis. JSON saja.`}]})});
+    if(!resp.ok) throw 0;
+    const data=await resp.json();
+    let t=(data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("").trim().replace(/^```json/i,'').replace(/^```/,'').replace(/```$/,'').trim();
+    const obj=JSON.parse(t);
+    if(!Array.isArray(obj.alur)) throw 0;
+    hideStatus();render(obj,'ai');
+  }catch(e){
+    hideStatus();render(buildOffline(bidang,fakta),'off');
+  }finally{runBtn.disabled=false;}
+});
+</script>
+</body>
+</html>
